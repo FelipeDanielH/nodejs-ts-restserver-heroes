@@ -1,4 +1,4 @@
-import express from "express";
+import express, { Request, Response } from "express";
 import path from "path";
 
 interface ServerOptions {
@@ -29,6 +29,26 @@ export default class Server {
         this.app.get('*', (req, res) => {
             res.sendFile(indexPath);
         });
+
+        this.app.get('/api/todos', (req:Request, res:Response)=>{
+            res.send([
+                {
+                    id: 1,
+                    text: 'texto 1',
+                    completedAt: new Date()
+                },
+                {
+                    id: 2,
+                    text: 'texto 2',
+                    completedAt: new Date()
+                },
+                {
+                    id: 3,
+                    text: 'texto 3',
+                    completedAt: new Date()
+                }
+            ])
+        })
 
         this.app.listen(3000, () => {
             console.log(`server running on PORT ${this.port}`);
