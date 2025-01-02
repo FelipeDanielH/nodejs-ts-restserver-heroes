@@ -25,11 +25,9 @@ export default class Server {
 
     async start(): Promise<void> {
 
-
-
         // MIDDLEWARES
         this.app.use(express.json());
-        this.app.use(express.urlencoded());
+        this.app.use(express.urlencoded({extended: true}));
 
         // DIRECTORIO PUBLICO
         this.app.use(express.static(this.public_path));
@@ -38,7 +36,7 @@ export default class Server {
         this.app.use(this.routes)
 
         // SPA
-        const indexPath = path.join(__dirname, '../../public/index.html');
+        const indexPath = path.join(__dirname, `../../${this.public_path}/index.html`);
         this.app.get('*', (req, res) => {
             res.sendFile(indexPath);
         });
