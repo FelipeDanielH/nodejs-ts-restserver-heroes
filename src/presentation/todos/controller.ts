@@ -1,6 +1,6 @@
+import { CreateTodoDto } from './../../domain/dtos/todos/create-todo.dto';
 import { prisma } from '../../data/postgres';
-import { Identifier } from './../../../node_modules/acorn/dist/acorn.d';
-import { Request, RequestHandler, Response } from "express";
+import { Request, Response } from "express";
 
 interface Todo {
     id?: number;
@@ -35,16 +35,11 @@ export class TodosController {
 
 
     public createTodo = async (req: Request, res: Response) => {
-        const { text, completedAt } = req.body;
-        if (!text) return res.status(400).json({ error: `falta texto` });
-
-        const fecha = completedAt || new Date()
+        const [error, createTodoDto] = CreateTodoDto.create(req.body)
+        if(error) return res.status(404).json({error});
 
         const todo = await prisma.todo.create({
-            data: { 
-                text,
-                completedAt: fecha
-             }
+            data: createTodoDto!
         })
 
         return res.status(200).json(todo);
