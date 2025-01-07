@@ -21,10 +21,16 @@ export class UpdateTodoDto {
         const { id, text, completedAt } =  props;
         if(isNaN(id)|| !id) return ['id no valido', undefined];
 
-        const fecha = new Date(completedAt);
-        if (isNaN(fecha.getTime())) return ['fecha invalida', undefined];
+        let fecha: Date | null
 
-        const dto = new UpdateTodoDto(id,text,fecha);
+        if(completedAt){
+            fecha = new Date(completedAt)
+            if (isNaN(fecha!.getTime())) return ['fecha invalida', undefined];
+        }else{
+            fecha = null;
+        }
+
+        const dto = new UpdateTodoDto(id,text,fecha!);
 
         return [undefined, dto];
     }
