@@ -6,7 +6,7 @@ export class TodoEntity{
         public readonly completedAt?: Date | null
     ){}
 
-    get isCompeted():boolean{
+    get isCompleted():boolean{
         return !!this.completedAt
     }
 
