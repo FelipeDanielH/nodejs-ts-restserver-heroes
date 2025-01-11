@@ -33,10 +33,12 @@ export class TodoDatasouceImpl implements TodoDatasource{
 
         const updatedTodo = await prisma.todo.update({
             where: {id: todo.id},
-            data: todo
+            data: updateTodoDto.values
         })
 
-        return TodoEntity.fromObject(updateTodoDto)
+        console.log(updatedTodo);
+
+        return TodoEntity.fromObject(updatedTodo)
     }
 
     async deleteById(id: number): Promise<TodoEntity> {
