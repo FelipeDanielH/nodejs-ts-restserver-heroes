@@ -10,4 +10,17 @@ export class TodoEntity{
         return !!this.completedAt
     }
 
+    public static fromObject( obj: {[key: string]:any}):TodoEntity {
+
+        const {id,text,completedAt} = obj;
+
+        if(!id) throw 'id obligatorio'
+        if(!text) throw 'texto obligatorio'
+
+        const newCompletedAt = new Date(completedAt);
+        if(completedAt && isNaN(newCompletedAt.getTime())) throw 'fecha no valida'
+
+        return new TodoEntity(id, text, completedAt)
+    }
+
 }
