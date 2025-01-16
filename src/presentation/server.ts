@@ -33,7 +33,7 @@ export default class Server {
         this.app.use(express.static(this.public_path));
 
         // RUTAS
-        this.app.use(this.routes)
+        this.app.use(this.routes);
 
         // SPA
         const indexPath = path.join(__dirname, `../../${this.public_path}/index.html`);
