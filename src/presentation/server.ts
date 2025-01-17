@@ -10,13 +10,14 @@ interface ServerOptions {
 
 export default class Server {
 
-    private app = express();
+    public app = express();
 
+    private serverListener?:any
     private readonly port: number;
     private readonly public_path: string;
     private readonly routes: Router;
 
-    constructor(options: ServerOptions) {
+    constructor(options: ServerOptions) {   
         const { port, public_path = 'public', routes } = options;
         this.port = port;
         this.public_path = public_path;
@@ -42,8 +43,12 @@ export default class Server {
         });
 
         // LISTEN DE PUERTOS
-        this.app.listen(3000, () => {
+        this.serverListener = this.app.listen(3000, () => {
             console.log(`server running on PORT ${this.port}`);
         })
+    }
+
+    public close(){
+        this.serverListener?.close();
     }
 }

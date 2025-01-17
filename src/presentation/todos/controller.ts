@@ -10,7 +10,7 @@ import { DeleteTodo } from '../../domain/usecases/todo/delete-todo';
 
 interface Todo {
     id?: number;
-    text: string
+    text: string;
     completedAt: Date | null
 }
 

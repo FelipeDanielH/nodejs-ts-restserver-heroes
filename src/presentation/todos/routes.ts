@@ -11,7 +11,7 @@ export class TodoRoutes {
 
         // Datasources & Repositorios
         const todoDatasource = new TodoDatasouceImpl;
-        const todoRepository = new TodoRepositoryImpl(todoDatasource)
+        const todoRepository = new TodoRepositoryImpl(todoDatasource);
         const todoController = new TodosController(todoRepository);
 
         // CONTROLLERS
