@@ -36,7 +36,7 @@ export class TodosController {
 
     public createTodo = (req: Request, res: Response) => {
         const [error, createTodoDto] = CreateTodoDto.create(req.body)
-        if (error) return res.status(404).json({ error });
+        if (error) return res.status(400).json({ error });
 
         new CreateTodo(this.todoRepository).execute(createTodoDto!)
             .then(todo => res.status(200).json(todo))
