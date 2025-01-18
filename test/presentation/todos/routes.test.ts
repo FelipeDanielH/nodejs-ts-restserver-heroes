@@ -43,12 +43,22 @@ describe('presentation/todos/routes.ts', () => {
             .get(`/api/todos/${todo.id}`)
             .expect(200);
 
-        console.log(body);
-
         expect(body).toEqual({
             id: expect.any(Number),
             text: todo.text,
             completedAt: null
         })
+    })
+
+    test('should return 404 not found in api/todos/:id',async ()=>{
+
+        const badId = 9999;
+
+        const {body} = await request(server.app)
+            .get(`/api/todos/${badId}`)
+            .expect(400)
+
+        console.log(body);
+
     })
 })
