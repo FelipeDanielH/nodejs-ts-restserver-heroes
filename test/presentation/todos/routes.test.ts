@@ -34,7 +34,21 @@ describe('presentation/todos/routes.ts', () => {
         expect(body[0].text).toEqual(todo1.text);
         expect(body[1].text).toEqual(todo2.text);
         expect(body[0].completedAt).toBeNull;
+    })
 
+    test('should return a TODO api/todos/:id', async () => {
+        const todo = await prisma.todo.create({data:todo1});
 
+        const {body} = await request(server.app)
+            .get(`/api/todos/${todo.id}`)
+            .expect(200);
+
+        console.log(body);
+
+        expect(body).toEqual({
+            id: expect.any(Number),
+            text: todo.text,
+            completedAt: null
+        })
     })
 })
