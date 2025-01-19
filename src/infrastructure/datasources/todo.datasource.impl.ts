@@ -36,8 +36,6 @@ export class TodoDatasouceImpl implements TodoDatasource{
             data: updateTodoDto.values
         })
 
-        console.log(updatedTodo);
-
         return TodoEntity.fromObject(updatedTodo)
     }
 

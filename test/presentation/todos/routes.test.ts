@@ -4,25 +4,25 @@ import { prisma } from "../../../src/data/postgres";
 
 describe('presentation/todos/routes.ts', () => {
 
-    beforeAll( async ()=> {
+    beforeAll(async () => {
         await server.start();
     })
 
-    afterAll( ()=> {
+    afterAll(() => {
         server.close();
     })
 
-    beforeEach( async ()=> {
+    beforeEach(async () => {
         await prisma.todo.deleteMany();
     })
 
-    const todo1 = {text: 'mensaje de prueba'};
-    const todo2 = {text: 'mensaje de prueba 2'};
+    const todo1 = { text: 'mensaje de prueba' };
+    const todo2 = { text: 'mensaje de prueba 2' };
 
     test("should return TODO's api/todos", async () => {
 
         await prisma.todo.createMany({
-            data: [todo1,todo2]
+            data: [todo1, todo2]
         })
 
         const { body } = await request(server.app)
@@ -37,9 +37,9 @@ describe('presentation/todos/routes.ts', () => {
     })
 
     test('should return a TODO api/todos/:id', async () => {
-        const todo = await prisma.todo.create({data:todo1});
+        const todo = await prisma.todo.create({ data: todo1 });
 
-        const {body} = await request(server.app)
+        const { body } = await request(server.app)
             .get(`/api/todos/${todo.id}`)
             .expect(200);
 
@@ -50,23 +50,23 @@ describe('presentation/todos/routes.ts', () => {
         })
     })
 
-    test('should return 404 not found in api/todos/:id',async ()=> {
+    test('should return 404 not found in api/todos/:id', async () => {
 
         const badId = 9999;
 
-        const {body} = await request(server.app)
+        const { body } = await request(server.app)
             .get(`/api/todos/${badId}`)
             .expect(400)
 
         expect(body).toEqual({});
     })
 
-    test('should return a new Todo POST api/todos',async ()=> {
+    test('should return a new Todo POST api/todos', async () => {
 
         const { body } = await request(server.app)
-        .post('/api/todos')
-        .send(todo1)
-        .expect(200)
+            .post('/api/todos')
+            .send(todo1)
+            .expect(200)
 
         expect(body).toEqual({
             id: expect.any(Number),
@@ -75,27 +75,101 @@ describe('presentation/todos/routes.ts', () => {
         })
     })
 
-    test('should return error if text is not sended', async ()=> {
+    test('should return error if text is not sended', async () => {
 
         const { body } = await request(server.app)
-        .post('/api/todos')
-        .send({})
-        .expect(400)
+            .post('/api/todos')
+            .send({})
+            .expect(400)
 
         expect(body).toEqual({ error: 'la property text es requerida' })
-
     })
 
     test('should return error if text length is 0 sending POST to api/todos', async () => {
 
-        const todoTest = { text:'' }
+        const todoTest = { text: '' }
 
-        const {body} = await request(server.app)
-        .post('/api/todos')
-        .send(todoTest)
-        .expect(400)
+        const { body } = await request(server.app)
+            .post('/api/todos')
+            .send(todoTest)
+            .expect(400)
 
         expect(body).toEqual({ error: 'la property text es requerida' })
+    })
 
+    test('should return an updated TODO: PUT api/todos/:id', async () => {
+
+        const todo = await prisma.todo.create({ data: todo1 })
+        const date = new Date(Date.now())
+
+        const { body } = await request(server.app)
+            .put(`/api/todos/${todo.id}`)
+            .send({
+                text: 'text actualizado',
+                completedAt: date
+            })
+            .expect(200)
+
+        expect(body.id).toEqual(expect.any(Number));
+        expect(body.text).toBe('text actualizado');
+        expect(new Date(body.completedAt)).toEqual(date);
+
+    })
+
+    test('should return 400 if todo not found', async () => {
+        const id = 9999
+
+        const { body } = await request(server.app)
+            .put(`/api/todos/${id}`)
+            .send(todo1)
+            .expect(400)
+
+        // expect(body).toEqual({});
+
+        expect(body).toEqual({})
+
+    })
+
+    test('should return an updated todo only with date passed', async () => {
+        const todoTest = await prisma.todo.create({
+            data: {
+                text: 'texto ejemplo',
+                completedAt: new Date(Date.now())
+            }
+        })
+
+        const updateDate: Date = new Date('1995-08-15')
+
+        const { body } = await request(server.app)
+            .put(`/api/todos/${todoTest.id}`)
+            .send({ completedAt: updateDate })
+            .expect(200)
+
+        expect(body).toEqual({
+            id: expect.any(Number),
+            text: todoTest.text,
+            completedAt: updateDate.toISOString()
+        })
+    })
+
+    test('should delete a todo DELETE /api/todos/:id',async () => {
+
+        const todoTest = await prisma.todo.create({data: todo1})
+
+        const { body } = await request(server.app)
+            .delete(`/api/todos/${todoTest.id}`)
+            .expect(200)
+
+        expect(body).toEqual(todoTest);
+    })
+
+    test('should return a 404 if todo do not exist', async ()=> {
+        const id = 9999
+
+        const { body } = await request(server.app)
+        .delete(`/api/todos/${id}`)
+        .expect(400)
+
+        expect(body).toEqual({});
     })
 })
