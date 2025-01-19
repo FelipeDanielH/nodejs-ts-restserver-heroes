@@ -3,10 +3,11 @@ import { TodoDatasource } from "../../domain/datasources/todo.datasources";
 import { CreateTodoDto } from "../../domain/dtos/todos/create-todo.dto";
 import { UpdateTodoDto } from "../../domain/dtos/todos/update-todo.dto";
 import { TodoEntity } from "../../domain/entities/todo.entity";
+import { CustomError } from "../../domain/errors/customErrors";
 
-export class TodoDatasouceImpl implements TodoDatasource{
+export class TodoDatasouceImpl implements TodoDatasource {
 
-    async create (createTodoDto: CreateTodoDto): Promise<TodoEntity> {
+    async create(createTodoDto: CreateTodoDto): Promise<TodoEntity> {
         const todo = await prisma.todo.create({
             data: createTodoDto!
         })
@@ -25,6 +26,8 @@ export class TodoDatasouceImpl implements TodoDatasource{
             where: { id }
         });
 
+        if (!todo) throw new CustomError('todo no encontrado', 404);
+
         return TodoEntity.fromObject(todo!)
     }
 
@@ -32,7 +35,7 @@ export class TodoDatasouceImpl implements TodoDatasource{
         const todo = await this.findById(updateTodoDto.id);
 
         const updatedTodo = await prisma.todo.update({
-            where: {id: todo.id},
+            where: { id: todo.id },
             data: updateTodoDto.values
         })
 
@@ -43,7 +46,7 @@ export class TodoDatasouceImpl implements TodoDatasource{
         const todo = await this.findById(id);
 
         await prisma.todo.delete({
-            where: {id: todo.id}
+            where: { id: todo.id }
         })
 
         return TodoEntity.fromObject(todo)

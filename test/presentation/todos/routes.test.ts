@@ -56,9 +56,9 @@ describe('presentation/todos/routes.ts', () => {
 
         const { body } = await request(server.app)
             .get(`/api/todos/${badId}`)
-            .expect(400)
+            .expect(404)
 
-        expect(body).toEqual({});
+            expect(body).toBe("todo no encontrado") 
     })
 
     test('should return a new Todo POST api/todos', async () => {
@@ -116,17 +116,17 @@ describe('presentation/todos/routes.ts', () => {
 
     })
 
-    test('should return 400 if todo not found', async () => {
+    test('should return 404 if todo not found', async () => {
         const id = 9999
 
         const { body } = await request(server.app)
             .put(`/api/todos/${id}`)
             .send(todo1)
-            .expect(400)
+            .expect(404)
 
         // expect(body).toEqual({});
 
-        expect(body).toEqual({})
+        expect(body).toBe("todo no encontrado")
 
     })
 
@@ -168,8 +168,8 @@ describe('presentation/todos/routes.ts', () => {
 
         const { body } = await request(server.app)
         .delete(`/api/todos/${id}`)
-        .expect(400)
+        .expect(404)
 
-        expect(body).toEqual({});
+        expect(body).toBe("todo no encontrado")
     })
 })
